@@ -1,0 +1,24 @@
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see Rails configuration guide
+  # https://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: <%= ENV.fetch("DATABASE_USER", 'postgres') %>
+  host: <%= ENV.fetch("DATABASE_HOST", 'localhost') %>
+  port: 5432
+
+development:
+  <<: *default
+  database: rails_project_skeleton_development
+
+test:
+  <<: *default
+  database: rails_project_skeleton_test
+
+production:
+  <<: *default
+  database: rails_project_skeleton_production
+  username: rails_project_skeleton
+  password: <%= ENV['RAILS_PROJECT_SKELETON_DATABASE_PASSWORD'] %>
