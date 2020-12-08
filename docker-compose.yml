@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  rails:
+  web:
     build:
       context: ./docker/ruby
       args:
@@ -30,6 +30,8 @@ services:
     stdin_open: true
     depends_on:
       - postgres
+
+      
   postgres:
     image: postgres:11
     environment:
