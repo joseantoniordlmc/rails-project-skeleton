@@ -24,7 +24,7 @@ services:
       - packs:/app/public/packs
       - rails_cache:/app/tmp/cache
     ports: 
-      - "3000:3000"
+      - "3005:3000"
     user: ruby
     tty: true
     stdin_open: true
