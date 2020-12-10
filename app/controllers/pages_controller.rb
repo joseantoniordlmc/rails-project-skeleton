@@ -4,29 +4,36 @@ class PagesController < ApplicationController
   end
 
   def search
-    links = find_links(params[:subreddit])
-    unless links
-      flash[:alert] = 'No Links found or Incorrect Subreddit'
-      return render action: :index
+    @profile = false
+    @subreddit = list_subreddit(params[:subreddit])
+    unless @subreddit
+      @message = 'No Links found or Incorrect Subreddit'
     end
+    render action: :index
   end
 
   def access_token
     @response = request_access_token
     @access_token = @response["access_token"]
-    flash[:success] = "Your Access Token is #{@response}"
-    return render action: :index
+    @message = "Your Access Token is #{@response}"
+    render action: :index
   end
 
   def my_data
-    @response = get_my_data
-    flash[:success] = "Your Access Token is #{@response}"
-    return render action: :index
+    response = get_my_data
+    @profile = true
+    @name = response["name"]
+    @image = response["icon_img"]
+    @url = response["subreddit"]["url"]
+    @user_type = response["subreddit"]["subreddit_type"]
+    render action: :index
   end
 
-  def list_subreddit
-    flash[:success] = "Your Access Token is #{@response}"
-    return render action: :index
+  def list_subreddit(subreddit)
+    access_token = request_access_token["access_token"]
+    @about = about(subreddit, access_token)
+    response = retrieve_posts(subreddit, access_token)
+    @submissions = response["data"]["children"]
   end
 
   private
@@ -67,7 +74,25 @@ class PagesController < ApplicationController
     body = Oj.load(response.body)
   end
 
-  def get_subreddit(subreddit)
-    request_api(subreddit)
+  def about(subreddit,access_token)
+    url = "https://oauth.reddit.com/r/#{subreddit}/about"
+    headers = "Bearer #{access_token}" 
+    conn = Faraday.new(url)
+    response = conn.get do |req|
+      req.url ''
+      req.headers['Authorization'] = headers
+    end
+    body = Oj.load(response.body)
+  end
+
+  def retrieve_posts(subreddit, access_token)
+    url = "https://oauth.reddit.com/r/#{subreddit}/top/.json?limit=10"
+    headers = "Bearer #{access_token}" 
+    conn = Faraday.new(url)
+    response = conn.get do |req|
+      req.url ''
+      req.headers['Authorization'] = headers
+    end
+    body = Oj.load(response.body)
   end
 end

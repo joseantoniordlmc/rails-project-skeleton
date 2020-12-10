@@ -3,8 +3,6 @@
   <div class="row">
     <div class="col-lg-12 mt-5">
        
-
-
       <div class="mx-auto mt-5" style="width: 400px">
         <%= form_with(url: access_token_path, method: 'get', local: true) do %>
           <%= button_tag 'Get Access Token', class: 'btn btn-success btn-block' %>
@@ -28,12 +26,42 @@
       </div>
     </div>
 
-     <% if flash[:alert] %>
-          <div class="alert alert-warning"><%= flash[:alert] %></div>
+     <% if @message %>
+          <div class="alert alert-warning"><%= @message %></div>
         <% end %>
-        <% if flash[:success] %>
-          <div class="alert alert-success"><%= flash[:success] %></div>
-        <% end %>
+
+    <% if @profile %>  
+        <div>
+          <p> My Name: <%= @name %></p>
+          <br>
+          <a href="http://www.reddit.com<%=@url%>"><%= @url %></a>
+          <br>
+          <img src="<%=@image%>">
+          <br>
+          <p>User Status: <%= @user_type %></p>
+        </div>
+    <% end %>
+
+    <% if @about %>  
+        <div>
+          <p>Subreddit: <%= @about["data"]["display_name"] %></p>
+          <p>Title: <%= @about["data"]["title"] %></p>
+          <p>Accounts Active: <%= @about["data"]["accounts_active"] %></p>
+          <p>Category: <%= @about["data"]["advertiser_category"] %></p>
+          <a href="http://www.reddit.com<%=@about["data"]["url"]%>"><%= @about["data"]["url"] %></a>
+        </div>
+    <% end %>
+
+    <% if @submissions %>  
+      <% @submissions.each do |entry| %>
+        <div>
+          <p>Title: <%= entry["data"]["title"] %></p>
+          <p>UpVote Ratio: <%= entry["data"]["upvote_ratio"] %></p>
+          <p>Author: <%= entry["data"]["author"] %></p>
+        </div>
+        <br><br>
+      <% end %>
+    <% end %>
 
 
   </div>
